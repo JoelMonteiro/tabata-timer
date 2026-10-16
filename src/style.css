@@ -1,0 +1,346 @@
+/* =============================================================
+   style.css — fundo preto, letras condensadas e uma cor por fase.
+   A cor de fundo vem do atributo data-fase do <body>, que o
+   main.ts muda a cada fase.
+   ============================================================= */
+
+/* Cores e letras usadas em toda a app. */
+:root {
+  --fundo: #0d0d0f;
+  --superficie: #18181c;
+  --superficie-2: #222228;
+  --borda: #2e2e36;
+  --texto: #f4f4f5;
+  --texto-suave: #a1a1aa;
+  --vermelho: #ff3b30;
+  --verde: #2fd36b;
+  --amarelo: #ffcc00;
+  --azul: #3b82f6;
+  --erro: #ff6b6b;
+
+  --cor-fase: var(--fundo);
+  --texto-fase: var(--texto);
+
+  --letra-titulo: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --letra-texto: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  color-scheme: dark;
+  font-family: var(--letra-texto);
+}
+
+/* Cores por fase: o resto do CSS usa var(--cor-fase) e var(--texto-fase). */
+body[data-fase="preparacao"]    { --cor-fase: var(--amarelo);  --texto-fase: #1f1800; }
+body[data-fase="trabalho"]      { --cor-fase: var(--vermelho); --texto-fase: #fff; }
+body[data-fase="descanso"]      { --cor-fase: var(--verde);    --texto-fase: #032611; }
+body[data-fase="descansoCiclo"] { --cor-fase: var(--azul);     --texto-fase: #fff; }
+body.em-pausa                   { --cor-fase: #3f3f46;         --texto-fase: #fff; }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--cor-fase);
+  color: var(--texto);
+  transition: background-color 0.3s ease;}
+
+body[data-fase="config"],
+body[data-fase="resumo"] { background: var(--fundo); }
+
+[hidden] { display: none !important; }
+
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: 0.4; cursor: default; }
+
+/* --- Configuração e resumo --- */
+
+.ecra {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.marca { display: flex; align-items: baseline; gap: 10px; }
+.marca-nome {
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 44px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--vermelho);
+}
+.marca-sub {
+  font-family: var(--letra-titulo);
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--texto-suave);
+}
+
+h2 {
+  font-family: var(--letra-titulo);
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--texto-suave);
+  margin: 0 0 10px;
+}
+.h2-nota { text-transform: none; letter-spacing: 0; font-family: var(--letra-texto); font-weight: 400; font-size: 13px; }
+
+input[type="text"], input[type="number"], select {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.linha { display: flex; gap: 8px; }
+.linha > select, .linha > input { flex: 1; }
+
+.botao-principal {
+  background: var(--vermelho);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  font-family: var(--letra-titulo);
+  font-size: 26px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.botao-principal:active { transform: scale(0.98); }
+
+.botao-secundario {
+  background: transparent;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  padding: 10px 14px;
+  white-space: nowrap;
+}
+
+.predefinicoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.predefinicao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.predefinicao strong { font-family: var(--letra-titulo); font-size: 19px; font-weight: 800; text-transform: uppercase; }
+.predefinicao span { font-size: 12px; color: var(--texto-suave); }
+.predefinicao:hover { border-color: var(--vermelho); }
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.campo label { display: block; font-size: 13px; color: var(--texto-suave); margin-bottom: 6px; }
+.campo-trabalho input { color: var(--vermelho); }
+.campo-descanso input { color: var(--verde); }
+
+/* Campo numérico com os botões − e + dos lados. */
+.stepper { display: flex; }
+.stepper input {
+  flex: 1;
+  text-align: center;
+  border-radius: 0;
+  font-family: var(--letra-titulo);
+  font-size: 26px;
+  font-weight: 800;
+  padding: 6px 4px;
+  /* Esconde as setas nativas do input number. */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.stepper button {
+  width: 42px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  font-size: 20px;
+}
+.stepper button:first-child { border-radius: 8px 0 0 8px; }
+.stepper button:last-child { border-radius: 0 8px 8px 0; }
+
+.chips { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.chips:empty { display: none; }.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding: 4px 6px 4px 12px;
+  font-size: 14px;
+}
+.chip button { background: none; border: none; font-size: 16px; line-height: 1; padding: 2px 6px; color: var(--texto-suave); }
+
+.opcao { display: flex; align-items: center; gap: 8px; }
+.ajuda { font-size: 13px; color: var(--texto-suave); margin: 0; min-height: 1em; }
+.erro { color: var(--erro); margin: 0; min-height: 1em; font-size: 14px; }
+.erro:empty { display: none; }
+
+.resumo-config {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid var(--borda);
+  padding-top: 14px;
+}
+.duracao { font-family: var(--letra-titulo); font-size: 40px; font-weight: 800; }
+.formula { font-family: var(--letra-titulo); font-size: 20px; color: var(--texto-suave); font-weight: 600; }
+
+/* --- Treino --- */
+
+.ecra-treino {
+  min-height: 100dvh;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  color: var(--texto-fase);
+  font-family: var(--letra-titulo);
+}
+.ecra-treino p { margin: 0; }
+
+.barra-topo { display: flex; justify-content: space-between; }
+.info-topo { font-size: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.centro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+}
+
+/* clamp(mín, ideal, máx): o texto cresce com a largura do ecrã, dentro destes limites. */
+.fase-nome { font-size: clamp(36px, 10vw, 56px); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1; }
+.exercicio { font-size: clamp(22px, 6vw, 32px); font-weight: 600; min-height: 1.2em; opacity: 0.9; }
+.tempo {
+  font-size: clamp(120px, 42vw, 260px);
+  font-weight: 800;
+  line-height: 0.9;
+  /* Algarismos com largura fixa, para o tempo não "dançar". */
+  font-variant-numeric: tabular-nums;
+  margin: 8px 0 !important;
+}
+
+.barra {
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  overflow: hidden;
+}
+/* A largura é definida pelo main.ts a cada atualização. */
+.barra-progresso { height: 100%; width: 0; background: var(--texto-fase); }
+
+.ronda { font-size: 26px; font-weight: 800; margin-top: 14px !important; text-transform: uppercase; }
+
+.pontos { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+/* Bolinhas das rondas: .feita = cheia, .atual = a piscar. */
+.pontos li { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--texto-fase); opacity: 0.6; }
+.pontos li.feita { background: var(--texto-fase); opacity: 1; }
+.pontos li.atual { opacity: 1; animation: piscar 1s infinite; }
+@keyframes piscar { 50% { background: var(--texto-fase); } }
+
+.a-seguir { font-size: 20px; font-weight: 600; opacity: 0.85; }
+
+/* Registo de reps durante o treino. */
+.painel-reps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 12px;
+  padding: 8px 8px 8px 16px;
+  margin-top: 12px;
+}
+.reps-rotulo { font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.reps-controlo { display: flex; align-items: center; gap: 6px; }
+.reps-controlo button {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--texto-fase);
+  font-size: 28px;
+  font-weight: 800;
+}
+/* Ronda ainda sem reps registadas. */
+.reps-valor.vazio { opacity: 0.45; }
+.reps-valor { min-width: 56px; text-align: center; font-size: 36px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.controlos { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 18px; }
+.botao-redondo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--texto-fase);
+  background: transparent;
+  color: var(--texto-fase);
+  font-size: 22px;
+}
+.botao-redondo.grande { width: 84px; height: 84px; font-size: 30px; background: rgba(0, 0, 0, 0.18); }
+
+/* --- Resumo --- */
+
+.ecra-resumo .marca-nome { color: var(--verde); font-size: 64px; }
+
+.metricas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.metrica, .pontuacao-numeros > div {
+  display: flex;
+  flex-direction: column;
+  background: var(--superficie);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.metrica-rotulo { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-suave); }
+.metrica-valor { font-family: var(--letra-titulo); font-size: 40px; font-weight: 800; line-height: 1.1; }
+
+#resumo-pontuacao { display: flex; flex-direction: column; gap: 12px; }
+.cartao-pontuacao { border: 1px solid var(--borda); border-radius: 12px; padding: 14px; }
+.cartao-pontuacao h3 {
+  font-family: var(--letra-titulo);
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+.pontuacao-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pontuacao-numeros > div:first-child .metrica-valor { color: var(--vermelho); }
+
+.reps-por-ronda { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+.reps-por-ronda li {
+  text-align: center;
+  background: var(--superficie-2);
+  border-radius: 6px;
+  padding: 6px 0;
+  font-family: var(--letra-titulo);
+  font-size: 18px;
+  font-weight: 600;
+}
+/* A ronda com menos reps (a pontuação). */
+.reps-por-ronda li.minimo { background: var(--vermelho); color: #fff; }

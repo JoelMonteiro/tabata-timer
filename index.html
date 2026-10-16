@@ -1,0 +1,194 @@
+<!doctype html>
+<!--
+  Tem os três ecrãs, cada um num <main>:
+    #ecra-config  (configurar o treino)
+    #ecra-treino  (o timer a correr)
+    #ecra-resumo  (pontuação no fim)
+  Só um está visível de cada vez: os outros têm o atributo "hidden", que o main.ts põe e tira.
+-->
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d0d0f" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>Tabata Timer</title>
+  </head>
+  <body data-fase="config">
+    <!-- ===================== Ecrã 1: configurar ===================== -->
+    <main id="ecra-config" class="ecra">
+      <header class="marca">
+        <span class="marca-nome">TABATA</span>
+        <span class="marca-sub">timer</span>
+      </header>
+
+      <section>
+        <h2>Treinos rápidos</h2>
+        <div id="predefinicoes" class="predefinicoes"></div>
+      </section>
+
+      <div class="linha">
+        <select id="treinos-guardados" aria-label="Os teus treinos guardados">
+          <option value="">Os teus treinos…</option>
+        </select>
+        <button id="apagar-treino" class="botao-secundario" type="button">Apagar</button>
+      </div>
+
+      <section>
+        <h2>Intervalos</h2>
+        <div class="campos">
+          <div class="campo campo-trabalho">
+            <label for="trabalho">Trabalho (s)</label>
+            <div class="stepper">
+              <button type="button" data-alvo="trabalho" data-passo="-5" aria-label="Menos 5">−</button>
+              <input id="trabalho" type="number" min="5" max="600" step="1" value="20" />
+              <button type="button" data-alvo="trabalho" data-passo="5" aria-label="Mais 5">+</button>
+            </div>
+          </div>
+          <div class="campo campo-descanso">
+            <label for="descanso">Descanso (s)</label>
+            <div class="stepper">
+              <button type="button" data-alvo="descanso" data-passo="-5" aria-label="Menos 5">−</button>
+              <input id="descanso" type="number" min="0" max="600" step="1" value="10" />
+              <button type="button" data-alvo="descanso" data-passo="5" aria-label="Mais 5">+</button>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="rondas">Rondas</label>
+            <div class="stepper">
+              <button type="button" data-alvo="rondas" data-passo="-1" aria-label="Menos 1">−</button>
+              <input id="rondas" type="number" min="1" max="50" step="1" value="8" />
+              <button type="button" data-alvo="rondas" data-passo="1" aria-label="Mais 1">+</button>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="ciclos">Tabatas (ciclos)</label>
+            <div class="stepper">
+              <button type="button" data-alvo="ciclos" data-passo="-1" aria-label="Menos 1">−</button>
+              <input id="ciclos" type="number" min="1" max="20" step="1" value="1" />
+              <button type="button" data-alvo="ciclos" data-passo="1" aria-label="Mais 1">+</button>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="descansoCiclo">Pausa entre Tabatas (s)</label>
+            <div class="stepper">
+              <button type="button" data-alvo="descansoCiclo" data-passo="-15" aria-label="Menos 15">−</button>
+              <input id="descansoCiclo" type="number" min="0" max="600" step="1" value="60" />
+              <button type="button" data-alvo="descansoCiclo" data-passo="15" aria-label="Mais 15">+</button>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="preparacao">Preparação (s)</label>
+            <div class="stepper">
+              <button type="button" data-alvo="preparacao" data-passo="-5" aria-label="Menos 5">−</button>
+              <input id="preparacao" type="number" min="0" max="60" step="1" value="10" />
+              <button type="button" data-alvo="preparacao" data-passo="5" aria-label="Mais 5">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Exercícios <span class="h2-nota">um por Tabata · opcional</span></h2>
+        <form id="form-exercicio" class="linha">
+          <input id="novo-exercicio" type="text" placeholder="Burpees" maxlength="40" autocomplete="off" list="sugestoes" />
+          <button type="submit" class="botao-secundario">Adicionar</button>
+        </form>
+        <!-- <datalist> = sugestões de autocomplete para o input com list="sugestoes". -->
+        <datalist id="sugestoes">
+          <option value="Burpees"></option>
+          <option value="Air squats"></option>
+          <option value="Push-ups"></option>
+          <option value="Sit-ups"></option>
+          <option value="Pull-ups"></option>
+          <option value="Kettlebell swings"></option>
+          <option value="Thrusters"></option>
+          <option value="Wall balls"></option>
+          <option value="Double unders"></option>
+          <option value="Mountain climbers"></option>
+          <option value="Row"></option>
+          <option value="Assault bike"></option>
+        </datalist>
+        <ol id="lista-exercicios" class="chips"></ol>
+      </section>
+
+      <label class="opcao">
+        <input id="som" type="checkbox" checked />
+        Som ligado
+      </label>
+
+      <div class="resumo-config">
+        <span id="duracao-prevista" class="duracao"></span>
+        <span id="formula" class="formula"></span>
+      </div>
+      <p id="erro-config" class="erro" role="alert"></p>
+
+      <button id="comecar" class="botao-principal" type="button">Começar</button>
+
+      <form id="form-guardar" class="linha">
+        <input id="nome-treino" type="text" placeholder="WOD de segunda" maxlength="40" />
+        <button type="submit" class="botao-secundario">Guardar treino</button>
+      </form>
+      <p id="mensagem-guardar" class="ajuda" role="status"></p>
+    </main>
+
+    <!-- ===================== Ecrã 2: treino ===================== -->
+    <main id="ecra-treino" class="ecra-treino" hidden>
+      <!-- Barra de cima: "Tabata 1/2" e "Falta 3:20". -->
+      <div class="barra-topo">
+        <span id="ciclo" class="info-topo"></span>
+        <span id="total-restante" class="info-topo"></span>
+      </div>
+
+      <div class="centro">
+        <p id="fase-nome" class="fase-nome"></p>
+        <p id="exercicio" class="exercicio"></p>
+        <p id="tempo" class="tempo">0:00</p>
+        <div class="barra" aria-hidden="true"><div id="barra-progresso" class="barra-progresso"></div></div>
+        <p id="ronda" class="ronda"></p>
+        <ol id="pontos-rondas" class="pontos" aria-hidden="true"></ol>
+        <p id="a-seguir" class="a-seguir"></p>
+      </div>
+
+      <div id="painel-reps" class="painel-reps">
+        <span id="reps-rotulo" class="reps-rotulo"></span>
+        <div class="reps-controlo">
+          <button id="reps-menos" type="button" aria-label="Menos uma rep">−</button>
+          <span id="reps-valor" class="reps-valor">0</span>
+          <button id="reps-mais" type="button" aria-label="Mais uma rep">+</button>
+        </div>
+      </div>
+
+      <div class="controlos">
+        <button id="sair" type="button" class="botao-redondo" aria-label="Sair do treino">✕</button>
+        <button id="pausa" type="button" class="botao-redondo grande" aria-label="Pausa">❚❚</button>
+        <button id="saltar" type="button" class="botao-redondo" aria-label="Saltar fase">⏭</button>
+      </div>
+    </main>
+
+    <!-- ===================== Ecrã 3: resumo ===================== -->
+    <main id="ecra-resumo" class="ecra ecra-resumo" hidden>
+      <header class="marca">
+        <span class="marca-nome">FEITO</span>
+        <span class="marca-sub">bom trabalho</span>
+      </header>
+      <div class="metricas">
+        <div class="metrica"><span class="metrica-rotulo">Tempo</span><span id="resumo-tempo" class="metrica-valor"></span></div>
+        <div class="metrica"><span class="metrica-rotulo">Rondas</span><span id="resumo-rondas" class="metrica-valor"></span></div>
+      </div>
+      <!-- Os cartões de pontuação são criados pelo main.ts (desenharResumo). -->
+      <div id="resumo-pontuacao"></div>
+      <button id="repetir" class="botao-principal" type="button">Repetir</button>
+      <button id="voltar" class="botao-secundario" type="button">Voltar à configuração</button>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
